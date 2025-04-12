@@ -21,17 +21,43 @@ public class HomeController : Controller
     public IActionResult Expense()
     {
         var allExpenses= _context.Expenses.ToList();
+        var totalExpense = allExpenses.Sum(x => x.Value);
+        ViewBag.Expense = totalExpense;
         return View(allExpenses);
     }
-    public IActionResult CreateEditExpense()
+    public IActionResult CreateEditExpense(int? id)
     {
+        if(id!=null)
+        {
+            var ExpenseInDb = _context.Expenses.SingleOrDefault(e => e.Id == id);
+            return View(ExpenseInDb);
+        }
+        
         return View();
 
     }
-         public IActionResult CreateEditExpenseForm(Expense expense)
+    public IActionResult DeleteExpense(int id)
     {
-        _context.Expenses.Add(expense);
+        var ExpenseInDb = _context.Expenses.SingleOrDefault(e => e.Id == id);
+        _context.Expenses.Remove(ExpenseInDb);
         _context.SaveChanges();
+        return RedirectToAction("Expense");
+
+    }
+    public IActionResult CreateEditExpenseForm(Expense expense)
+    {
+        if (expense.Id == 0)
+        {
+            _context.Expenses.Add(expense);
+
+        }
+        else
+        {
+            _context.Expenses.Update(expense);
+
+        }
+
+            _context.SaveChanges();
         return RedirectToAction("Expense");
     }
 

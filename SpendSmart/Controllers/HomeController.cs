@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using SpendSmart.Models;
+using SpendSmart.ViewModels;
 
 namespace SpendSmart.Controllers;
 
@@ -22,8 +23,15 @@ public class HomeController : Controller
     {
         var allExpenses= _context.Expenses.ToList();
         var totalExpense = allExpenses.Sum(x => x.Value);
-        ViewBag.Expense = totalExpense;
-        return View(allExpenses);
+        //ViewBag.Expense = totalExpense;
+        var viewModel = new ExpenseViewModel
+        {
+            TotalExpense = totalExpense,
+            Expenses = allExpenses
+
+        };
+        //return View(allExpenses);
+        return View(viewModel);
     }
     public IActionResult CreateEditExpense(int? id)
     {

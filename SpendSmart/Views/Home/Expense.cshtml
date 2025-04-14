@@ -1,12 +1,14 @@
-﻿@{
+﻿@using SpendSmart.ViewModels
+@{
     ViewData["Title"] = "Expenses";
 }
-@model List<Expense>
+@*@model List<Expense>*@
+@model ExpenseViewModel
 <div class="text-center">
     <h1 class="display-4">Expenses</h1>
     <br/>
     <hr />
-    <h3>Total Expenses $@ViewBag.Expense</h3>
+    <h3>Total Expenses $@Model.TotalExpense</h3>
     <br />
     <table class="table">
         <thead>
@@ -27,7 +29,7 @@
         </thead>
         <tbody>
             @{
-                foreach (var expense in Model)
+                foreach (var expense in Model.Expenses)
                 {
                     <tr>
                     <td>

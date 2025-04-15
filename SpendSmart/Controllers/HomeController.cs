@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SpendSmart.Models;
 using SpendSmart.ViewModels;
 
@@ -19,9 +20,9 @@ public class HomeController : Controller
     {
         return View();
     }
-    public IActionResult Expense()
+    public async Task<IActionResult> Expense()
     {
-        var allExpenses= _context.Expenses.ToList();
+        var allExpenses= await _context.Expenses.ToListAsync();
         var totalExpense = allExpenses.Sum(x => x.Value);
         //ViewBag.Expense = totalExpense;
         var viewModel = new ExpenseViewModel

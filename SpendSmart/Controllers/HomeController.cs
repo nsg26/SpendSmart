@@ -22,17 +22,25 @@ public class HomeController : Controller
     }
     public async Task<IActionResult> Expense()
     {
-        var allExpenses= await _context.Expenses.ToListAsync();
-        var totalExpense = allExpenses.Sum(x => x.Value);
-        //ViewBag.Expense = totalExpense;
-        var viewModel = new ExpenseViewModel
+        try
         {
-            TotalExpense = totalExpense,
-            Expenses = allExpenses
+            var allExpenses = await _context.Expenses.ToListAsync();
+            var totalExpense = allExpenses.Sum(x => x.Value);
+           // throw new InvalidOperationException("Simulated database error!");
+            //ViewBag.Expense = totalExpense;
+            var viewModel = new ExpenseViewModel
+            {
+                TotalExpense = totalExpense,
+                Expenses = allExpenses
 
-        };
-        //return View(allExpenses);
-        return View(viewModel);
+            };
+            //return View(allExpenses);
+            return View(viewModel);
+        }
+        catch(Exception Ex)
+        {
+            return View("Error");
+        }
     }
     public IActionResult CreateEditExpense(int? id)
     {
@@ -80,4 +88,5 @@ public class HomeController : Controller
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
+
 }

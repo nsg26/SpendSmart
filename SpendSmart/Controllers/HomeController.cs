@@ -1,8 +1,10 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using SpendSmart.Models;
 using SpendSmart.ViewModels;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SpendSmart.Controllers;
 
@@ -61,21 +63,39 @@ public class HomeController : Controller
         return RedirectToAction("Expense");
 
     }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
     public IActionResult CreateEditExpenseForm(Expense expense)
     {
-        if (expense.Id == 0)
+        if (!ModelState.IsValid)
         {
-            _context.Expenses.Add(expense);
-
+            foreach (var entry in ModelState)
+            {
+                if (entry.Value.Errors.Count > 0)
+                {
+                    var errorMessages = entry.Value.Errors.Select(e => e.ErrorMessage).ToList();
+                    Console.WriteLine($"Field: {entry.Key}, Errors: {string.Join(", ", errorMessages)}");
+                }
+            }
+            return View(expense);
         }
-        else
+        if (ModelState.IsValid)
         {
-            _context.Expenses.Update(expense);
+            if (expense.Id == 0)
+            {
+                _context.Expenses.Add(expense);
 
-        }
+            }
+            else
+            {
+                _context.Expenses.Update(expense);
+            }
 
             _context.SaveChanges();
-        return RedirectToAction("Expense");
+            return RedirectToAction("Expense");
+        }
+      
+        return View("CreateEditExpense", expense);
     }
 
     public IActionResult Privacy()

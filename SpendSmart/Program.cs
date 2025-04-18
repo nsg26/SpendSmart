@@ -1,6 +1,9 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Net;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using SpendSmart.Models;
+using SpendSmart.Services;
 
 namespace SpendSmart
 {
@@ -14,6 +17,16 @@ namespace SpendSmart
             builder.Services.AddControllersWithViews();
             builder.Services.AddDbContext<SpendSmartDBContext>(options => options.UseInMemoryDatabase("SpendSmartDB"));
             builder.Logging.AddConsole().AddDebug();
+            builder.Services.AddSingleton<UserService>();
+            // Add cookie authentication
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(options =>
+            {
+                options.LoginPath = "/Auth/Login"; // Path to login page
+                options.AccessDeniedPath = "/Auth/AccessDenied"; // Path for access denied
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(1); // Cookie expiration
+                options.SlidingExpiration = true; // Reset expiration timer on activity
+            });
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -29,6 +42,7 @@ namespace SpendSmart
 
             app.UseRouting();
 
+            app.UseAuthentication(); // Enable authentication
             app.UseAuthorization();
 
             app.MapControllerRoute(

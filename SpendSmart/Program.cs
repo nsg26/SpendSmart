@@ -13,7 +13,7 @@ namespace SpendSmart
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Services.AddDbContext<SpendSmartDBContext>(options => options.UseInMemoryDatabase("SpendSmartDB"));
-
+            builder.Logging.AddConsole().AddDebug();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

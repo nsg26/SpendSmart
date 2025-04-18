@@ -28,7 +28,8 @@ public class HomeController : Controller
         {
             var allExpenses = await _context.Expenses.ToListAsync();
             var totalExpense = allExpenses.Sum(x => x.Value);
-           // throw new InvalidOperationException("Simulated database error!");
+            _logger.LogInformation("Successfully loaded {Count} expenses.", allExpenses.Count);
+            // throw new InvalidOperationException("Simulated database error!");
             //ViewBag.Expense = totalExpense;
             var viewModel = new ExpenseViewModel
             {
@@ -41,6 +42,7 @@ public class HomeController : Controller
         }
         catch(Exception Ex)
         {
+            _logger.LogError(Ex, "Failed to load expenses.");
             return View("Error");
         }
     }
@@ -71,28 +73,39 @@ public class HomeController : Controller
         {
             foreach (var entry in ModelState)
             {
-                if (entry.Value.Errors.Count > 0)
+                var key = entry.Key;
+                var errors = entry.Value.Errors;
+
+                foreach (var error in errors)
                 {
-                    var errorMessages = entry.Value.Errors.Select(e => e.ErrorMessage).ToList();
-                    Console.WriteLine($"Field: {entry.Key}, Errors: {string.Join(", ", errorMessages)}");
+                    // Replace this with your actual logging logic
+                    _logger.LogWarning($"Validation error on '{key}': {error.ErrorMessage}");
                 }
             }
             return View(expense);
         }
+
         if (ModelState.IsValid)
         {
-            if (expense.Id == 0)
+            try
             {
-                _context.Expenses.Add(expense);
+                if (expense.Id == 0)
+                {
+                    _context.Expenses.Add(expense);
 
+                }
+                else
+                {
+                    _context.Expenses.Update(expense);
+                }
+
+                _context.SaveChanges();
+                return RedirectToAction("Expense");
             }
-            else
+            catch (Exception ex)
             {
-                _context.Expenses.Update(expense);
+                _logger.LogError(ex, "Error saving expense.");
             }
-
-            _context.SaveChanges();
-            return RedirectToAction("Expense");
         }
       
         return View("CreateEditExpense", expense);

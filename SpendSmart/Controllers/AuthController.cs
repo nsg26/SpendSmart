@@ -23,6 +23,7 @@ namespace SpendSmart.Controllers
 
         // POST: /Auth/Login
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(string username, string password)
         {
             if (_userService.ValidateUser(username, password))

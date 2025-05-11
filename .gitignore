@@ -361,3 +361,23 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+
+## Original Visual Studio ignores ##
+# (Keep all existing content here) #
+
+# Docker-specific ignores
+**/.dockerignore
+docker-compose.override.yml
+docker-compose.vs.*
+
+# Local development files (exclude)
+appsettings.Development.json
+
+# Keep these config files!
+!appsettings.json
+!appsettings.Docker.json
+
+# Explicitly keep these Docker files
+!Dockerfile
+!docker-compose.yml

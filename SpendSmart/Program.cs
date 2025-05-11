@@ -15,7 +15,8 @@ namespace SpendSmart
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-            builder.Services.AddDbContext<SpendSmartDBContext>(options => options.UseInMemoryDatabase("SpendSmartDB"));
+            builder.Services.AddDbContext<SpendSmartDBContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Logging.AddConsole().AddDebug();
             builder.Services.AddSingleton<UserService>();
             // Add cookie authentication
@@ -35,6 +36,12 @@ namespace SpendSmart
                 app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
+                // Auto-run migrations in production
+                using (var scope = app.Services.CreateScope())
+                {
+                    var dbContext = scope.ServiceProvider.GetRequiredService<SpendSmartDBContext>();
+                    dbContext.Database.Migrate();
+                }
             }
 
             app.UseHttpsRedirection();
@@ -48,7 +55,7 @@ namespace SpendSmart
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
-
+            app.Urls.Add("http://0.0.0.0:8080");
             app.Run();
         }
     }

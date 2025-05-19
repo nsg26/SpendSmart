@@ -4,12 +4,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using SpendSmart.Models;
 using SpendSmart.Services;
+using Microsoft.AspNetCore.Identity;
 
 namespace SpendSmart
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -17,18 +18,65 @@ namespace SpendSmart
             builder.Services.AddControllersWithViews();
             builder.Services.AddDbContext<SpendSmartDBContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-            builder.Logging.AddConsole().AddDebug();
-            builder.Services.AddSingleton<UserService>();
-            // Add cookie authentication
-            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddCookie(options =>
+            // Add Identity services
+            builder.Services.AddDefaultIdentity<IdentityUser>(options =>
             {
-                options.LoginPath = "/Auth/Login"; // Path to login page
-                options.AccessDeniedPath = "/Auth/AccessDenied"; // Path for access denied
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(1); // Cookie expiration
-                options.SlidingExpiration = true; // Reset expiration timer on activity
+                options.Password.RequiredLength = 6;
+                options.Password.RequireNonAlphanumeric = false;
+            })
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<SpendSmartDBContext>();
+            builder.Logging.AddConsole().AddDebug();
+            // builder.Services.AddSingleton<UserService>();
+            // Add cookie authentication
+            /* builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+             .AddCookie(options =>
+             {
+                 options.LoginPath = "/Account/Login"; // Path to login page
+                 options.AccessDeniedPath = "/Account/AccessDenied"; // Path for access denied
+                 options.ExpireTimeSpan = TimeSpan.FromMinutes(1); // Cookie expiration
+                 options.SlidingExpiration = true; // Reset expiration timer on activity
+             }); */
+
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Account/Login";
+                options.AccessDeniedPath = "/Account/AccessDenied";
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(1);
+                options.SlidingExpiration = true;
             });
             var app = builder.Build();
+            using (var scope = app.Services.CreateScope())
+            {
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+                string[] roles = { "Admin", "User" };
+
+                // Create roles if not exist
+                foreach (var role in roles)
+                {
+                    if (!await roleManager.RoleExistsAsync(role))
+                    {
+                        await roleManager.CreateAsync(new IdentityRole(role));
+                    }
+                }
+
+                // Create Admin User
+                string adminEmail = "admin@spendsmart.com";
+                string adminPassword = "Admin@123"; // Strong password recommended
+                var adminUser = await userManager.FindByEmailAsync(adminEmail);
+                if (adminUser == null)
+                {
+                    var user = new IdentityUser { UserName = adminEmail, Email = adminEmail };
+                    var result = await userManager.CreateAsync(user, adminPassword);
+                    if (result.Succeeded)
+                    {
+                        await userManager.AddToRoleAsync(user, "Admin");
+                    }
+                }
+            }
+
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
@@ -55,7 +103,7 @@ namespace SpendSmart
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
-            app.Urls.Add("http://0.0.0.0:8080");
+           // app.Urls.Add("http://0.0.0.0:8080");
             app.Run();
         }
     }

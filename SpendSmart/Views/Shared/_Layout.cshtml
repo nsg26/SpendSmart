@@ -20,6 +20,7 @@
             </a>
             <div class="navbar-collapse justify-content-end">
                 <ul class="navbar-nav">
+
                     @if (User.Identity.IsAuthenticated)
                     {
                         <li class="nav-item">
@@ -32,7 +33,7 @@
                     else
                     {
                         <li class="nav-item">
-                            <a class="btn btn-primary" asp-controller="Auth" asp-action="Login">Login</a>
+                            <a class="btn btn-primary" asp-controller="Account" asp-action="Login">Login</a>
                         </li>
                     }
                 </ul>

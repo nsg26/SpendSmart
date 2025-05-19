@@ -27,7 +27,13 @@ public class HomeController : Controller
     {
         try
         {
-            var allExpenses = await _context.Expenses.ToListAsync();
+            //  Get current user's ID
+            var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            //var allExpenses = await _context.Expenses.ToListAsync();
+            //  Only fetch data for that user
+            var allExpenses = await _context.Expenses
+                .Where(x => x.UserId == currentUserId)
+                .ToListAsync();
             var totalExpense = allExpenses.Sum(x => x.Value);
             _logger.LogInformation("Successfully loaded {Count} expenses.", allExpenses.Count);
             // throw new InvalidOperationException("Simulated database error!");
@@ -61,6 +67,12 @@ public class HomeController : Controller
     public IActionResult DeleteExpense(int id)
     {
         var ExpenseInDb = _context.Expenses.SingleOrDefault(e => e.Id == id);
+        var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        // Protect from deleting others' expenses
+        if (ExpenseInDb == null || ExpenseInDb.UserId != currentUserId)
+        {
+            return Unauthorized();
+        }
         _context.Expenses.Remove(ExpenseInDb);
         _context.SaveChanges();
         return RedirectToAction("Expense");
@@ -85,18 +97,28 @@ public class HomeController : Controller
             }
             return View(expense);
         }
+        var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
         if (ModelState.IsValid)
         {
             try
             {
-                if (expense.Id == 0)
+                if (expense.Id == null||expense.Id == 0)
                 {
+                    //_context.Expenses.Add(expense);
+                    //  Attach logged-in user ID during insert
+                    expense.UserId = currentUserId;
                     _context.Expenses.Add(expense);
 
                 }
                 else
                 {
+                    var existing = _context.Expenses.AsNoTracking().FirstOrDefault(x => x.Id == expense.Id);
+                    if (existing == null || existing.UserId != currentUserId)
+                    {
+                        return Unauthorized();
+                    }
+                    expense.UserId = currentUserId;
                     _context.Expenses.Update(expense);
                 }
 

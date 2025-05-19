@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SpendSmart.Models;
 
@@ -11,9 +12,11 @@ using SpendSmart.Models;
 namespace SpendSmart.Migrations
 {
     [DbContext(typeof(SpendSmartDBContext))]
-    partial class SpendSmartDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250518180952_AddUserIdToExpense")]
+    partial class AddUserIdToExpense
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

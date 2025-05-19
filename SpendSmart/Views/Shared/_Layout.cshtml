@@ -23,6 +23,11 @@
 
                     @if (User.Identity.IsAuthenticated)
                     {
+                        <li class="nav-item me-2">
+                            <span class="navbar-text">
+                                Hello, @User.Identity.Name!
+                            </span>
+                        </li>
                         <li class="nav-item">
                             <form asp-controller="Auth" asp-action="Logout" method="post">
                                 @Html.AntiForgeryToken()

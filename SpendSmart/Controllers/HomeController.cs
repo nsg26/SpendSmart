@@ -21,7 +21,12 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        return View();
+        var username = User.Identity.Name;
+        var viewModel = new WelcomeViewModel
+        {
+            Username = username
+        };
+        return View(viewModel);
     }
     public async Task<IActionResult> Expense()
     {

@@ -3,7 +3,6 @@ using System.Net;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using SpendSmart.Models;
-using SpendSmart.Services;
 using Microsoft.AspNetCore.Identity;
 
 namespace SpendSmart

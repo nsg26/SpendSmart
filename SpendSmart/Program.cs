@@ -48,6 +48,11 @@ namespace SpendSmart
             var app = builder.Build();
             using (var scope = app.Services.CreateScope())
             {
+                var dbContext = scope.ServiceProvider.GetRequiredService<SpendSmartDBContext>();
+
+                // Apply any pending migrations (creates AspNetRoles, AspNetUsers, etc.)
+                dbContext.Database.Migrate();
+
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
 
@@ -85,11 +90,11 @@ namespace SpendSmart
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
                 // Auto-run migrations in production
-                using (var scope = app.Services.CreateScope())
+               /* using (var scope = app.Services.CreateScope())
                 {
                     var dbContext = scope.ServiceProvider.GetRequiredService<SpendSmartDBContext>();
                     dbContext.Database.Migrate();
-                }
+                } */
             }
 
             app.UseHttpsRedirection();

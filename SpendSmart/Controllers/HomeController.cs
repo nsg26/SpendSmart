@@ -28,28 +28,56 @@ public class HomeController : Controller
         };
         return View(viewModel);
     }
-    public async Task<IActionResult> Expense()
+    public async Task<IActionResult> Expense(int page = 1)
     {
+        const int pageSize = 10;
         try
         {
             //  Get current user's ID
             var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             //var allExpenses = await _context.Expenses.ToListAsync();
             //  Only fetch data for that user
-            var allExpenses = await _context.Expenses
-                .Where(x => x.UserId == currentUserId)
-                .ToListAsync();
-            var totalExpense = allExpenses.Sum(x => x.Value);
-            _logger.LogInformation("Successfully loaded {Count} expenses.", allExpenses.Count);
+            // var allExpenses = await _context.Expenses
+            // .Where(x => x.UserId == currentUserId)
+            // .ToListAsync();
+
+            // Query all expenses for the current user
+            var allExpenses = _context.Expenses
+            .Where(x => x.UserId == currentUserId)
+            .OrderByDescending(x => x.Id); // Optional: newest first
+
+            //var totalExpense = allExpenses.Sum(x => x.Value);
+
+            // Total count of all user's expenses
+            var totalCount = await allExpenses.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+            // Paginated expenses (only current page)
+            var expenses = await allExpenses
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+            // Total of all expenses across all pages for this user
+
+            var totalExpense = await _context.Expenses
+            .Where(x => x.UserId == currentUserId)
+            .SumAsync(x => x.Value);
+
+            // _logger.LogInformation("Successfully loaded {Count} expenses.", allExpenses.Count);
             // throw new InvalidOperationException("Simulated database error!");
             //ViewBag.Expense = totalExpense;
+
+            // Prepare the view model
             var viewModel = new ExpenseViewModel
             {
+                Expenses = expenses,
                 TotalExpense = totalExpense,
-                Expenses = allExpenses
-
+                CurrentPage = page,
+                PageSize = pageSize,          //  Needed for serial number logic
+                TotalPages = totalPages
             };
-            //return View(allExpenses);
+            _logger.LogInformation("Loaded page {Page} with {Count} expenses.", page, expenses.Count);
             return View(viewModel);
         }
         catch(Exception Ex)
@@ -113,6 +141,7 @@ public class HomeController : Controller
                     //_context.Expenses.Add(expense);
                     //  Attach logged-in user ID during insert
                     expense.UserId = currentUserId;
+                    expense.CreatedDate = DateTime.Now;
                     _context.Expenses.Add(expense);
 
                 }
@@ -124,6 +153,7 @@ public class HomeController : Controller
                         return Unauthorized();
                     }
                     expense.UserId = currentUserId;
+                    expense.UpdatedDate = DateTime.Now;
                     _context.Expenses.Update(expense);
                 }
 

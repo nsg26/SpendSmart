@@ -29,7 +29,7 @@
                             </span>
                         </li>
                         <li class="nav-item">
-                            <form asp-controller="Auth" asp-action="Logout" method="post">
+                            <form asp-controller="Account" asp-action="Logout" method="post">
                                 @Html.AntiForgeryToken()
                                 <button type="submit" class="btn btn-outline-secondary">Logout</button>
                             </form>

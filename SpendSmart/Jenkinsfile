@@ -43,7 +43,7 @@ pipeline {
                 echo '🐳 Building Docker image...'
                 dir('SpendSmart')
                 {
-                    sh "docker build -t ${IMAGE_NAME}:latest ."
+                    sh "docker build -t ${IMAGE_NAME}:latest -f SpendSmart/Dockerfile ."
                 }
             }
         }

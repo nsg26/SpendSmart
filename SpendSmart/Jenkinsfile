@@ -41,10 +41,8 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 echo '🐳 Building Docker image...'
-                dir('SpendSmart')
-                {
-                    sh "docker build -t ${IMAGE_NAME}:latest -f SpendSmart/Dockerfile ."
-                }
+                sh "docker build -t ${IMAGE_NAME}:latest -f SpendSmart/Dockerfile ."
+                
             }
         }
 

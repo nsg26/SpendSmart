@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     environment {
+        ASPNETCORE_ENVIRONMENT = 'Docker'
         IMAGE_NAME = 'aspnetcoremvcapp'          // Docker image name
         CONTAINER_NAME = 'aspnetcoremvc-container' // Docker container name
         HOST_PORT = '9090'                        // Port exposed on your machine

@@ -58,7 +58,14 @@ pipeline {
         stage('Run Docker Container') {
             steps {
                 echo '🏃‍♂️ Running new Docker container...'
+                // If Jenkins is running inside Docker on Linux, you can try using --network=host instead
+                // sh "docker run -d --network=host --name ${CONTAINER_NAME} ${IMAGE_NAME}:latest"
+                // Otherwise, stick with port mapping
                 sh "docker run -d -p ${HOST_PORT}:${CONTAINER_PORT} --name ${CONTAINER_NAME} ${IMAGE_NAME}:latest"
+                // Wait a few seconds before checking logs
+                sh "sleep 5"
+                echo '📄 Printing container logs for debugging...'
+                sh "docker logs ${CONTAINER_NAME}"
             }
         }
         stage('🧪 Debug Info') {

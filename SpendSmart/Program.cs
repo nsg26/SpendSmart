@@ -112,7 +112,7 @@ namespace SpendSmart
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
-           // app.Urls.Add("http://0.0.0.0:8080");
+            app.Urls.Add("http://0.0.0.0:8080");
             app.Run();
         }
     }

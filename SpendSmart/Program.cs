@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using SpendSmart.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 
 namespace SpendSmart
 {
@@ -15,6 +16,10 @@ namespace SpendSmart
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            // Access configuration this way
+            var configuration = builder.Configuration;
+            var connectionString = configuration.GetConnectionString("DefaultConnection")
+                      ?? Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
             builder.Services.AddDbContext<SpendSmartDBContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             // Add Identity services

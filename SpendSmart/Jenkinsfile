@@ -6,6 +6,7 @@ pipeline {
         CONTAINER_NAME = 'aspnetcoremvc-container' // Docker container name
         HOST_PORT = '9090'                        // Port exposed on your machine
         CONTAINER_PORT = '8080'                     // Port inside the container (default for ASP.NET Core)
+        LOG_FILE = 'container_logs.txt'            // File to store container logs
     }
 
     stages {
@@ -58,6 +59,20 @@ pipeline {
             steps {
                 echo '🏃‍♂️ Running new Docker container...'
                 sh "docker run -d -p ${HOST_PORT}:${CONTAINER_PORT} --name ${CONTAINER_NAME} ${IMAGE_NAME}:latest"
+            }
+        }
+        stage('🧪 Debug Info') {
+            steps {
+                echo '🔍 Checking container status and logs...'
+
+                // List running containers
+                sh 'docker ps -a'
+
+                // Inspect the specific container
+                sh "docker inspect ${CONTAINER_NAME} || true"
+
+                // Fetch container logs
+                sh "docker logs ${CONTAINER_NAME} > ${LOG_FILE} || true"
             }
         }
     }

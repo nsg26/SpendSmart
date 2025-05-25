@@ -27,4 +27,6 @@ RUN dotnet publish "./SpendSmart.csproj" -c $BUILD_CONFIGURATION -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+# Copy the Docker-specific appsettings
+COPY SpendSmart/appsettings.Docker.json ./appsettings.Docker.json
 ENTRYPOINT ["dotnet", "SpendSmart.dll"]

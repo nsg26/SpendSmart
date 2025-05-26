@@ -1,0 +1,21 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Stop App and DB Containers') {
+            steps {
+                echo '🛑 Stopping all app and DB containers...'
+                sh 'docker compose down'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Application and DB stopped successfully."
+        }
+        failure {
+            echo "❌ Failed to stop containers. Please check logs."
+        }
+    }
+}

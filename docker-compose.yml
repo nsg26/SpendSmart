@@ -9,6 +9,8 @@ services:
       - "1433:1433"
     volumes:
       - sql_data:/var/opt/mssql
+    networks:
+      - my-shared-network
 
   web:
     build:
@@ -21,6 +23,13 @@ services:
       - db
     ports:
       - "9090:8080"
+    networks:
+      - my-shared-network
 
 volumes:
   sql_data:
+  networks:
+
+networks:
+  my-shared-network:
+  external: true

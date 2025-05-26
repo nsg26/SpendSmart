@@ -56,23 +56,11 @@ pipeline {
             }
         }
 
-        stage('Run Docker Container') {
+        stage('Run App with Docker Compose') {
             steps {
-                echo '🏃‍♂️ Running new Docker container...'
-                // If Jenkins is running inside Docker on Linux, you can try using --network=host instead
-                // sh "docker run -d --network=host --name ${CONTAINER_NAME} ${IMAGE_NAME}:latest"
-                // Otherwise, stick with port mapping
-                //sh "docker run -d -p ${HOST_PORT}:${CONTAINER_PORT} --name ${CONTAINER_NAME} ${IMAGE_NAME}:latest"
-                sh """
-                    docker run -d \
-                    -p ${HOST_PORT}:${CONTAINER_PORT} \
-                    -e ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT} \
-                    --name ${CONTAINER_NAME} ${IMAGE_NAME}:latest
-                """
-                // Wait a few seconds before checking logs
-                sh "sleep 5"
-                echo '📄 Printing container logs for debugging...'
-                sh "docker logs ${CONTAINER_NAME}"
+                echo '🏃‍♂️ Running app with docker-compose...'
+                sh 'docker-compose down'
+                sh 'docker-compose up -d --build'
             }
         }
         stage('🧪 Debug Info') {

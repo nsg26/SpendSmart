@@ -28,8 +28,8 @@ services:
 
 volumes:
   sql_data:
-  networks:
+
 
 networks:
   my-shared-network:
-   external: true
+   driver: bridge

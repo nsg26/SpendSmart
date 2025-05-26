@@ -1,11 +1,15 @@
 pipeline {
     agent any
 
+    environment {
+        COMPOSE_PROJECT_NAME = 'spendsmart'
+    }
+
     stages {
         stage('Stop App and DB Containers') {
             steps {
                 echo '🛑 Stopping all app and DB containers...'
-                sh 'docker compose down'
+                sh "docker compose -p ${COMPOSE_PROJECT_NAME} down"
             }
         }
     }
@@ -13,9 +17,6 @@ pipeline {
     post {
         success {
             echo "✅ Application and DB stopped successfully."
-        }
-        failure {
-            echo "❌ Failed to stop containers. Please check logs."
         }
     }
 }

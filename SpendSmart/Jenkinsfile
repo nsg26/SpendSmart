@@ -8,6 +8,7 @@ pipeline {
         HOST_PORT = '9090'                        // Port exposed on your machine
         CONTAINER_PORT = '8080'                     // Port inside the container (default for ASP.NET Core)
         LOG_FILE = 'container_logs.txt'            // File to store container logs
+        COMPOSE_PROJECT_NAME = 'spendsmart' // Match the actual Jenkins job folder name or use same in both
     }
 
     stages {
@@ -59,8 +60,8 @@ pipeline {
         stage('Run App with Docker Compose') {
             steps {
                 echo '🏃‍♂️ Running app with docker-compose...'
-                sh 'docker compose down || true'
-                sh 'docker compose up -d --build'
+                sh 'docker compose -p ${COMPOSE_PROJECT_NAME} down || true'
+                sh 'docker compose -p ${COMPOSE_PROJECT_NAME} up -d --build'
             }
         }
         stage('🧪 Debug Info') {

@@ -59,8 +59,8 @@ pipeline {
         stage('Run App with Docker Compose') {
             steps {
                 echo '🏃‍♂️ Running app with docker-compose...'
-                sh 'docker-compose down'
-                sh 'docker-compose up -d --build'
+                sh 'docker compose down'
+                sh 'docker compose up -d --build'
             }
         }
         stage('🧪 Debug Info') {

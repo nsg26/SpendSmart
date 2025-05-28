@@ -152,6 +152,8 @@ public class HomeController : Controller
                     {
                         return Unauthorized();
                     }
+                    // Preserve the original CreatedDate
+                    expense.CreatedDate = existing.CreatedDate;
                     expense.UserId = currentUserId;
                     expense.UpdatedDate = DateTime.Now;
                     _context.Expenses.Update(expense);

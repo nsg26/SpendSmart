@@ -41,14 +41,6 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
-            steps {
-                echo '🐳 Building Docker image...'
-                sh "docker build -t ${IMAGE_NAME}:latest -f SpendSmart/Dockerfile ."
-                
-            }
-        }
-
         stage('Stop & Remove Existing Container') {
             steps {
                 echo '🧹 Stopping and removing old container (if running)...'

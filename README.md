@@ -22,6 +22,46 @@ The application implements **cookie-based authentication** with:
 - Anti-forgery token validation
 - Secure cookie settings (HTTPOnly, SameSite=Lax)
 
+## 🔐 Cookie Security Implementation
+SpendSmart uses ASP.NET Identity's cookie authentication with these security settings:
+
+### Security Features
+| Setting | Implementation | Notes |
+|---------|----------------|-------|
+| **HttpOnly** | Enabled (default) | Prevents client-side access to cookies |
+| **SameSite** | Lax (default) | Balanced CSRF protection |
+| **SecurePolicy** | Environment-aware | `None` in development, `Always` in production |
+| **Expiration** | 1 minute sliding | Aggressive security posture |
+| **Token Validation** | Built-in | Automatic token validation |
+
+### Code Implementation
+Security settings come from ASP.NET Identity defaults configured in `Program.cs`:
+```csharp
+builder.Services.AddDefaultIdentity<IdentityUser>(options => {
+    // Password policy configured here
+})
+.AddRoles<IdentityRole>()
+.AddEntityFrameworkStores<SpendSmartDBContext>();
+
+builder.Services.ConfigureApplicationCookie(options => {
+    options.LoginPath = "/Account/Login";
+    options.AccessDeniedPath = "/Account/AccessDenied";
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(1);
+    options.SlidingExpiration = true;
+});
+```
+### Security Verification
+| Environment | Cookie Security | Verification |
+|-------------|-----------------|-------------|
+| Development | HTTP allowed | No `Secure` flag |
+| Production | HTTPS required | `Secure` flag present |
+| Docker | Config-driven | Set via `ASPNETCORE_ENVIRONMENT` |
+
+**Browser Check:** After login, verify in DevTools > Cookies:
+- HttpOnly flag
+- SameSite=Lax
+- Secure flag (in production)
+
 ## 🐳 Why Docker?
 | Benefit | Description |
 |---------|-------------|

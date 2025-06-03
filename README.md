@@ -5,7 +5,9 @@
 [![ASP.NET Core 8](https://img.shields.io/badge/ASP.NET%20Core-8.0-purple)](https://dotnet.microsoft.com)
 
 SpendSmart is a containerized ASP.NET MVC 8 application with cookie-based authentication, SQL Server backend, and EF Core migrations. Managed via Docker and Jenkins CI/CD.
-
+![SpendSmart Login](SpendSmart/Assets/Login.png)
+![SpendSmart User_Landing](SpendSmart/Assets/User_Landing.png)
+![SpendSmart User_DashBoard](SpendSmart/Assets/User_DashBoard.png)
 ## 🚀 Key Technologies
 - **ASP.NET Core MVC 8** with Cookie Authentication
 - **Entity Framework Core** (Code-first migrations)
@@ -132,6 +134,9 @@ How to use:
 
 - Run the job to build and start the application.
 
+![SpendSmart Start_Pipeline](SpendSmart/Assets/Start_Pipeline.png)
+![SpendSmart Start_Pipeline_Output](SpendSmart/Assets/Start_Pipeline_Output.png)
+
 **2. jenkinsfile-stop**
 - Stops and removes the containers and volumes safely.
 
@@ -145,7 +150,9 @@ How to use:
 
 - Set Script Path to jenkinsfile-stop.
 
-- Run the job to stop the application and clean up Docker resources.#
+- Run the job to stop the application and clean up Docker resources.
+
+![SpendSmart Stop_Pipeline](SpendSmart/Assets/Stop_Pipeline.png)
 
 ---
 
@@ -157,6 +164,7 @@ How to use:
 | Username | `sa`             |
 | Password | `Docker@1234`    |
 
+![SpendSmart SQL_Server_Database](SpendSmart/Assets/SQL_Server_Database.png)
 ---
 
 ## 📁 Project Structure

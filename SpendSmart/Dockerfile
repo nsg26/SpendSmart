@@ -31,6 +31,8 @@ COPY --from=publish /app/publish .
 # Copy the Docker-specific appsettings
 COPY SpendSmart/appsettings.Docker.json ./appsettings.Docker.json
 ENTRYPOINT ["dotnet", "SpendSmart.dll"]
+# Create folder
+RUN mkdir -p /https
 # Copy the HTTPS certificate
 COPY https/aspnetapp.pfx /https/aspnetapp.pfx
 

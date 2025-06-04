@@ -8,14 +8,14 @@ SpendSmart is a containerized ASP.NET MVC 8 application with cookie-based authen
 ![SpendSmart Login](SpendSmart/Assets/Login.png)
 ![SpendSmart User_Landing](SpendSmart/Assets/User_Landing.png)
 ![SpendSmart User_DashBoard](SpendSmart/Assets/User_DashBoard.png)
-## 🚀 Key Technologies
+##  Key Technologies
 - **ASP.NET Core MVC 8** with Cookie Authentication
 - **Entity Framework Core** (Code-first migrations)
 - **SQL Server Database**
 - **Docker** (Multi-container environment)
 - **Jenkins** (CI/CD pipeline)
 
-## 🔒 Authentication System
+##  Authentication System
 The application implements **cookie-based authentication** with:
 - User registration/login functionality
 - Session management via cookies
@@ -24,7 +24,7 @@ The application implements **cookie-based authentication** with:
 - Anti-forgery token validation
 - Secure cookie settings (HTTPOnly, SameSite=Lax)
 
-## 🔐 Cookie Security Implementation
+##  Cookie Security Implementation
 SpendSmart uses ASP.NET Identity's cookie authentication with these security settings:
 
 ### Security Features
@@ -64,7 +64,7 @@ builder.Services.ConfigureApplicationCookie(options => {
 - SameSite=Lax
 - Secure flag (in production)
 
-## 🐳 Why Docker?
+##  Why Docker?
 | Benefit | Description |
 |---------|-------------|
 | **Consistent Environments** | Identical behavior across all systems |
@@ -74,12 +74,12 @@ builder.Services.ConfigureApplicationCookie(options => {
 | **DevOps Friendly** | Seamless CI/CD pipeline integration |
 | **Secure Execution** | Isolated from host OS |
 
-## 💻 System Requirements
+##  System Requirements
 1. Docker Desktop ([Windows/Mac](https://www.docker.com/products/docker-desktop) | [Linux](https://docs.docker.com/engine/install/))
 2. Git
 3. Jenkins (for pipeline execution)
 
-## 🚀 One-Command Setup
+##  One-Command Setup
 
 ## 1. Clone and Launch
 ```bash
@@ -111,7 +111,7 @@ docker-compose down --volumes
 ```
 ---
 
-## 🔄 Run via Jenkins Pipeline
+##  Run via Jenkins Pipeline
 
 This repo contains two Jenkinsfiles for CI/CD automation:
 
@@ -156,7 +156,7 @@ How to use:
 
 ---
 
-## 🧪 Accessing the SQL Server
+##  Accessing the SQL Server
 
 | Setting  | Value            |
 | -------- | ---------------- |
@@ -167,7 +167,7 @@ How to use:
 ![SpendSmart SQL_Server_Database](SpendSmart/Assets/SQL_Server_Database.png)
 ---
 
-## 📁 Project Structure
+##  Project Structure
 <pre>
 SpendSmart/
 ├── SpendSmart/              # ASP.NET MVC Source
@@ -179,7 +179,7 @@ SpendSmart/
 </pre>
 ---
 
-## 📝 Notes
+##  Notes
 
 - Application uses cookie-based authentication
 
@@ -195,7 +195,7 @@ SpendSmart/
 
 - Use docker volume ls and docker volume rm for manual volume management
 
-## 📜 License
+##  License
 MIT © 2025 SpendSmart Contributors
 
 

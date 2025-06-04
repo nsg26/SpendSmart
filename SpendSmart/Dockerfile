@@ -32,10 +32,10 @@ COPY --from=publish /app/publish .
 COPY SpendSmart/appsettings.Docker.json ./appsettings.Docker.json
 ENTRYPOINT ["dotnet", "SpendSmart.dll"]
 # Create folder
-RUN mkdir -p /https
+RUN mkdir -p /app/https
 # Copy the HTTPS certificate
-COPY https/aspnetapp.pfx /https/aspnetapp.pfx
+COPY https/aspnetapp.pfx /app/https/aspnetapp.pfx
 
 # Set environment variables for Kestrel
 ENV ASPNETCORE_Kestrel__Certificates__Default__Password="Project@2025"
-ENV ASPNETCORE_Kestrel__Certificates__Default__Path="/https/aspnetapp.pfx"
+ENV ASPNETCORE_Kestrel__Certificates__Default__Path="/app/https/aspnetapp.pfx"

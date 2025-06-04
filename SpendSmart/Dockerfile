@@ -6,6 +6,7 @@ USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
+EXPOSE 443
 
 
 # This stage is used to build the service project
@@ -30,3 +31,9 @@ COPY --from=publish /app/publish .
 # Copy the Docker-specific appsettings
 COPY SpendSmart/appsettings.Docker.json ./appsettings.Docker.json
 ENTRYPOINT ["dotnet", "SpendSmart.dll"]
+# Copy the HTTPS certificate
+COPY https/aspnetapp.pfx /https/aspnetapp.pfx
+
+# Set environment variables for Kestrel
+ENV ASPNETCORE_Kestrel__Certificates__Default__Password="Project@2025"
+ENV ASPNETCORE_Kestrel__Certificates__Default__Path="/https/aspnetapp.pfx"

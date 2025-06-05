@@ -49,6 +49,17 @@ namespace SpendSmart
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(1);
                 options.SlidingExpiration = true;
             });
+            // Load additional configuration files
+            builder.Configuration
+                .AddJsonFile("appsettings.json", optional: true)
+                .AddJsonFile("appsettings.Docker.json", optional: true)
+                .AddEnvironmentVariables();
+
+            // Explicitly configure Kestrel (for HTTPS inside Docker)
+            builder.WebHost.ConfigureKestrel((context, options) =>
+            {
+                options.Configure(context.Configuration.GetSection("Kestrel"));
+            });
             var app = builder.Build();
             using (var scope = app.Services.CreateScope())
             {

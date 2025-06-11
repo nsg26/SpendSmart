@@ -22,35 +22,35 @@ pipeline {
 
         stage('Checkout Source Code') {
             steps {
-                echo '📥 Cloning repository...'
+                echo 'Cloning repository...'
                 checkout scm  // Pulls code from your Git repository (GitHub/GitLab)
             }
         }
 
         stage('Restore Dependencies') {
             steps {
-                echo '🔧 Restoring NuGet packages...'
+                echo 'Restoring NuGet packages...'
                 sh 'dotnet restore'  // Restores packages from .csproj
             }
         }
 
         stage('Build Project') {
             steps {
-                echo '🏗️ Building ASP.NET Core MVC app...'
+                echo 'Building ASP.NET Core MVC app...'
                 sh 'dotnet build --no-restore'  // Compiles your project
             }
         }
 
         stage('Publish Release Build') {
             steps {
-                echo '🚀 Publishing app to output folder...'
+                echo 'Publishing app to output folder...'
                 sh 'dotnet publish -c Release -o out'  // Publishes files to /out
             }
         }
 
         stage('Stop & Remove Existing Container') {
             steps {
-                echo '🧹 Stopping and removing old container (if running)...'
+                echo 'Stopping and removing old container (if running)...'
                 sh "docker stop ${CONTAINER_NAME} || true"
                 sh "docker rm ${CONTAINER_NAME} || true"
             }
@@ -58,14 +58,14 @@ pipeline {
 
         stage('Run App with Docker Compose') {
             steps {
-                echo '🏃‍♂️ Running app with docker-compose...'
+                echo 'Running app with docker-compose...'
                 sh 'docker compose -p ${COMPOSE_PROJECT_NAME} down || true'
                 sh 'docker compose -p ${COMPOSE_PROJECT_NAME} up -d --build'
             }
         }
-        stage('🧪 Debug Info') {
+        stage('Debug Info') {
             steps {
-                echo '🔍 Checking container status and logs...'
+                echo 'Checking container status and logs...'
 
                 // List running containers
                 sh 'docker ps -a'
@@ -81,10 +81,10 @@ pipeline {
 
     post {
         success {
-            echo "✅ CI/CD pipeline completed successfully. App is running on http://localhost:${HOST_PORT}"
+            echo "CI/CD pipeline completed successfully. App is running on http://localhost:${HOST_PORT}"
         }
         failure {
-            echo "❌ CI/CD pipeline failed. Check the console output above for errors."
+            echo "CI/CD pipeline failed. Check the console output above for errors."
         }
     }
 }

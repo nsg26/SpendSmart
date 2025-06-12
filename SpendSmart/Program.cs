@@ -14,6 +14,9 @@ namespace SpendSmart
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
+
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             // Access configuration this way
@@ -52,13 +55,37 @@ namespace SpendSmart
             // Load additional configuration files
             builder.Configuration
                 .AddJsonFile("appsettings.json", optional: true)
-                .AddJsonFile("appsettings.Docker.json", optional: true)
+                .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
 
-            // Explicitly configure Kestrel (for HTTPS inside Docker)
-            builder.WebHost.ConfigureKestrel((context, options) =>
+            builder.WebHost.ConfigureKestrel(options =>
             {
-                options.Configure(context.Configuration.GetSection("Kestrel"));
+                if (builder.Environment.IsDevelopment())
+                {
+                    options.ListenLocalhost(5034); // HTTP
+                    options.ListenLocalhost(7199, listenOptions => // HTTPS
+                    {
+                        listenOptions.UseHttps();
+                    });
+                }
+                else
+                {
+                    // Apply configuration from file but with validation
+                    var kestrelSection = builder.Configuration.GetSection("Kestrel");
+                    if (kestrelSection.Exists())
+                    {
+                        options.Configure(kestrelSection);
+
+                        // Additional validation for Docker
+                        if (builder.Environment.EnvironmentName == "Docker")
+                        {
+                            if (!File.Exists("/app/https/aspnetapp.pfx"))
+                            {
+                                throw new FileNotFoundException("Missing HTTPS certificate in Docker container");
+                            }
+                        }
+                    }
+                }
             });
             var app = builder.Build();
             using (var scope = app.Services.CreateScope())
@@ -110,6 +137,13 @@ namespace SpendSmart
                     var dbContext = scope.ServiceProvider.GetRequiredService<SpendSmartDBContext>();
                     dbContext.Database.Migrate();
                 } */
+            }
+           
+
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
             }
 
             app.UseHttpsRedirection();

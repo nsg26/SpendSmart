@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using SpendSmart.Models;
 using SpendSmart.ViewModels;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using SpendSmart.Services;
+using SpendSmart.Models.External;
 
 namespace SpendSmart.Controllers;
 [Authorize]
@@ -13,10 +15,12 @@ public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
     private readonly SpendSmartDBContext _context;
-    public HomeController(ILogger<HomeController> logger, SpendSmartDBContext context)
+    private readonly CurrencyService _currencyService;
+    public HomeController(ILogger<HomeController> logger, SpendSmartDBContext context, CurrencyService currencyService)
     {
         _logger = logger;
         _context = context;
+        _currencyService = currencyService;
     }
 
     public IActionResult Index()
@@ -28,7 +32,7 @@ public class HomeController : Controller
         };
         return View(viewModel);
     }
-    public async Task<IActionResult> Expense(int page = 1)
+    public async Task<IActionResult> Expense(int page = 1, string baseCurrency = "USD")
     {
         const int pageSize = 10;
         try
@@ -67,6 +71,8 @@ public class HomeController : Controller
             // _logger.LogInformation("Successfully loaded {Count} expenses.", allExpenses.Count);
             // throw new InvalidOperationException("Simulated database error!");
             //ViewBag.Expense = totalExpense;
+            //Call external currency API
+            var exchangeRates = await _currencyService.GetRatesAsync();
 
             // Prepare the view model
             var viewModel = new ExpenseViewModel
@@ -78,6 +84,8 @@ public class HomeController : Controller
                 TotalPages = totalPages
             };
             _logger.LogInformation("Loaded page {Page} with {Count} expenses.", page, expenses.Count);
+            ViewBag.BaseCurrency = baseCurrency;
+            ViewBag.ExchangeRates = exchangeRates;
             return View(viewModel);
         }
         catch(Exception Ex)

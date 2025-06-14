@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using SpendSmart.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using SpendSmart.Services;
 
 namespace SpendSmart
 {
@@ -87,6 +88,8 @@ namespace SpendSmart
                     }
                 }
             });
+            builder.Services.AddHttpClient(); // For API calls
+            builder.Services.AddScoped<CurrencyService>(); // Register your service
             var app = builder.Build();
             using (var scope = app.Services.CreateScope())
             {

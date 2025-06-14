@@ -4,11 +4,29 @@
 }
 @*@model List<Expense>*@
 @model ExpenseViewModel
+@{
+    var baseCurrency = ViewBag.BaseCurrency as string ?? "USD";
+    var exchangeRates = ViewBag.ExchangeRates as SpendSmart.Models.External.ExchangeRateResponse;
+}
 <div class="container mt-4">
     <h1 class="mb-4 text-center">Expenses</h1>
-
+    <form method="get" asp-action="Expense" class="text-center mb-4">
+        <label for="currency" class="me-2 fw-bold">Select Currency:</label>
+        <select name="baseCurrency" id="currency" onchange="this.form.submit()" class="form-select d-inline w-auto">
+            <option value="USD" selected="@(baseCurrency == "USD")">USD</option>
+            <option value="EUR" selected="@(baseCurrency == "EUR")">EUR</option>
+            <option value="GBP" selected="@(baseCurrency == "GBP")">GBP</option>
+            <option value="INR" selected="@(baseCurrency == "INR")">INR</option>
+        </select>
+    </form>
     <div class="text-center mb-3">
         <h4>Total Expenses: $@Model.TotalExpense.ToString("N2")</h4>
+
+        @if (exchangeRates?.Rates != null && exchangeRates.Rates.ContainsKey(baseCurrency))
+        {
+            var convertedTotal = Model.TotalExpense * exchangeRates.Rates[baseCurrency];
+            <h5 class="text-muted">(@convertedTotal.ToString("N2") @baseCurrency)</h5>
+        }
     </div>
 
     <table class="table table-bordered table-striped">
@@ -30,7 +48,13 @@
                 {
                     <tr>
                         <td>@serialNumber</td>
-                        <td>@expense.Value.ToString("N2")</td>
+                        <td>@expense.Value.ToString("N2")
+                            @if (exchangeRates?.Rates != null && exchangeRates.Rates.ContainsKey(baseCurrency))
+                            {
+                                var converted = expense.Value * exchangeRates.Rates[baseCurrency];
+                                <div class="text-muted small">(@converted.ToString("N2") @baseCurrency)</div>
+                            }
+                        </td>
                         <td>@expense.Description</td>
                         <td>@expense.CreatedDate.ToString("dd MMM yyyy hh:mm tt")</td>
                         <td>
@@ -55,7 +79,7 @@
                 @for (int i = 1; i <= Model.TotalPages; i++)
                 {
                     <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
-                        <a class="page-link" asp-action="Expense" asp-route-page="@i">@i</a>
+                        <a class="page-link" asp-action="Expense" asp-route-page="@i" asp-route-baseCurrency="@baseCurrency">@i</a>
                     </li>
                 }
             </ul>

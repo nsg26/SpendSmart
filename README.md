@@ -4,7 +4,7 @@
 [![Docker Container](https://img.shields.io/badge/Docker-Container-informational)](https://www.docker.com)
 [![ASP.NET Core 8](https://img.shields.io/badge/ASP.NET%20Core-8.0-purple)](https://dotnet.microsoft.com)
 
-SpendSmart is a containerized ASP.NET MVC 8 application with cookie-based authentication, SQL Server backend, and EF Core migrations. Managed via Docker and Jenkins CI/CD.
+SpendSmart is a containerized ASP.NET MVC 8 application with cookie-based authentication, SQL Server backend, and EF Core migrations. The application exposes a secured Web API for external consumption and integrates live currency conversion using a third-party API. Managed via Docker and Jenkins CI/CD.
 ![SpendSmart Login](SpendSmart/Assets/Login.png)
 ![SpendSmart User_Landing](SpendSmart/Assets/User_Landing.png)
 ![SpendSmart User_DashBoard](SpendSmart/Assets/User_DashBoard.png)
@@ -14,6 +14,8 @@ SpendSmart is a containerized ASP.NET MVC 8 application with cookie-based authen
 - **SQL Server Database**
 - **Docker** (Multi-container environment)
 - **Jenkins** (CI/CD pipeline)
+- **Swagger (REST API documentation and testing)** for external integration
+- **Currency Conversion via open.er-api.com**
 
 ##  Authentication System
 The application implements **cookie-based authentication** with:
@@ -23,6 +25,47 @@ The application implements **cookie-based authentication** with:
 - ASP.NET Identity framework
 - Anti-forgery token validation
 - Secure cookie settings (HTTPOnly, SameSite=Lax)
+
+## External Currency Conversion (Live)
+
+SpendSmart integrates live currency conversion using `https://open.er-api.com/v6/latest/USD`.  
+This enables users to view their expenses in real-time in multiple currencies.
+
+- **Base Currency**: USD (fixed)
+- **Frontend Integration**: Drop-down to choose target currency
+- **Conversion Logic**: Handled in service layer and controller
+- **Security**: External API call cached per session
+
+---
+
+## Exposing Your Data via Web API
+
+SpendSmart exposes secure API endpoints to allow external systems to access user expense data. Authentication is enforced via API key.
+
+## API Endpoint: Get User Expenses
+SpendSmart exposes a secure REST API to fetch user expenses:
+
+GET /api/ExternalApi/expenses/{userId}
+- Headers: X-API-KEY: MySuperSecretKey123
+- Response: JSON list of user's expense
+- Authentication: Requires a valid API key
+
+## Swagger Integration
+
+SpendSmart includes Swagger UI for testing and exploring REST APIs.
+
+### How to Enable Swagger in Program.cs
+```csharp
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+app.UseSwagger();
+app.UseSwaggerUI();
+```
+### Access Swagger UI
+
+https://localhost:9443/Swagger
+
 
 ##  Cookie Security Implementation
 SpendSmart uses ASP.NET Identity's cookie authentication with these security settings:

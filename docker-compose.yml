@@ -23,7 +23,7 @@ services:
       - db
     ports:
       - "9090:8080"
-      - "9443:443"   # HTTPS (enabled)
+      - "9003:443"   # HTTPS (enabled)
     volumes:
       - ./https:/https:ro
     networks:

@@ -3,6 +3,7 @@
 [![Jenkins Pipeline](https://img.shields.io/badge/Jenkins-Pipeline-blue)](https://jenkins.io)
 [![Docker Container](https://img.shields.io/badge/Docker-Container-informational)](https://www.docker.com)
 [![ASP.NET Core 8](https://img.shields.io/badge/ASP.NET%20Core-8.0-purple)](https://dotnet.microsoft.com)
+[![Webhook Enabled](https://img.shields.io/badge/Webhook-Enabled-brightgreen)](https://docs.github.com/en/webhooks)
 
 SpendSmart is a containerized ASP.NET MVC 8 application with cookie-based authentication, SQL Server backend, and EF Core migrations. The application exposes a secured Web API for external consumption and integrates live currency conversion using a third-party API. Managed via Docker and Jenkins CI/CD.
 ![SpendSmart Login](SpendSmart/Assets/Login.png)
@@ -64,7 +65,7 @@ app.UseSwaggerUI();
 ```
 ### Access Swagger UI
 
-https://localhost:9443/Swagger
+https://localhost:9003/Swagger
 
 
 ##  Cookie Security Implementation
@@ -126,7 +127,7 @@ builder.Services.ConfigureApplicationCookie(options => {
 
 ## 1. Clone and Launch
 ```bash
-git clone https://github.com/your-username/SpendSmart.git
+git clone https://github.com/nsg26/SpendSmart.git
 cd SpendSmart
 ```
 ## Build and start containers:
@@ -134,7 +135,7 @@ cd SpendSmart
 docker-compose up --build -d
 ```
 ## Access application:
-1. Open http://localhost:9090
+1. Open https://localhost:9003
 
 2. Register new account or use default(Admin) credentials:
 
@@ -198,6 +199,56 @@ How to use:
 ![SpendSmart Stop_Pipeline](SpendSmart/Assets/Stop_Pipeline.png)
 
 ---
+##  GitHub Webhook Integration (Auto-Trigger CI/CD)
+
+SpendSmart integrates with **GitHub webhooks** to automatically trigger the Jenkins CI/CD pipeline whenever code is pushed to the repository.
+
+### How It Works
+
+- A **GitHub webhook** is configured to notify Jenkins of any new push events.
+- Jenkins runs locally in a Docker container and is exposed to the internet using **ngrok**, which creates a secure HTTPS tunnel.
+- GitHub sends a webhook payload to Jenkins, which then triggers the CI/CD pipeline automatically.
+
+### Exposing Jenkins with ngrok
+
+To allow GitHub to reach your local Jenkins instance:
+
+```bash
+ngrok http 9090
+```
+### This generates a public HTTPS URL like:
+
+```bash
+https://abc123.ngrok-free.app/github-webhook/
+```
+### Use this URL as the Payload URL when configuring the webhook in GitHub.
+
+**GitHub Webhook Setup Steps**
+1. Run ngrok to expose Jenkins:
+
+```bash
+ngrok http 9090
+```
+2. Copy the generated public URL.
+3. In your GitHub repository, go to:
+   
+   Settings > Webhooks > Add webhook
+
+4. Configure the webhook as follows:
+   
+    - Payload URL: https://your-ngrok-subdomain/github-webhook/
+    - Content type: application/json
+    - Secret: (optional but recommended for verification)
+    - Event type: Just the push event
+  
+6. In Jenkins, open your pipeline job and enable:
+   
+   Build Triggers > GitHub hook trigger for GITScm polling
+   
+### Result
+Every push to GitHub triggers a Jenkins build automatically
+
+---
 
 ##  Accessing the SQL Server
 
@@ -228,11 +279,14 @@ SpendSmart/
 
 - Database migrations run automatically on startup
 
-- Port Configuration:
+- Port Configuration
 
-  - Jenkins maps: Host 9090 → Container 8080
+    | Service        | Host Port | Container Port | Protocol | Description                                 |
+    |----------------|-----------|----------------|----------|---------------------------------------------|
+    | Jenkins        | `8080`    | `8080`         | HTTP     | Jenkins CI/CD interface (Docker container)  |
+    | SpendSmart App | `9003`    | `443`          | HTTPS    | Access the app securely over HTTPS (Docker) |
+    | SQL Server     | `1433`    | `1433`         | TCP      | SQL Server database port                    |
 
-  - Database: 1433 → 1433 (container)
 
 - SQL Server password follows complexity rules
 

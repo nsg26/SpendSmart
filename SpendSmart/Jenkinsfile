@@ -55,7 +55,7 @@ pipeline {
                 sh '''
                     export PATH="$PATH:$HOME/.dotnet/tools"
                     dotnet test --logger "trx;LogFileName=test_results.trx" --results-directory SpendSmart.Tests/TestResults
-                    trx2junit SpendSmart.Tests/TestResults/test_results.trx -o SpendSmart.Tests/TestResults/test_results.xml
+                    trx2junit SpendSmart.Tests/TestResults/test_results.trx
                 '''
             }
          }

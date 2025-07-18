@@ -55,7 +55,7 @@ pipeline {
                 sh '''
                     export PATH="$PATH:$HOME/.dotnet/tools"
                     dotnet test --logger "trx;LogFileName=test_results.trx"
-                    trx2junit test_results.trx -o test_results.xml
+                    trx2junit SpendSmart.Tests/TestResults/test_results.trx -o test_results.xml
                 '''
             }
          }
@@ -93,11 +93,11 @@ pipeline {
 
     post {
         success {
-            junit 'test_results.xml'
+            junit 'SpendSmart.Tests/TestResults/test_results.trx'
             echo "CI/CD pipeline completed successfully. App is running on http://localhost:${HOST_PORT}"
         }
         failure {
-            junit 'test_results.xml'
+            junit 'SpendSmart.Tests/TestResults/test_results.trx'
             echo "CI/CD pipeline failed. Check the console output above for errors."
         }
     }

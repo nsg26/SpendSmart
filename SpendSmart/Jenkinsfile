@@ -54,7 +54,7 @@ pipeline {
                 sh 'dotnet tool install --global trx2junit || true'
                 sh '''
                     export PATH="$PATH:$HOME/.dotnet/tools"
-                    dotnet test --logger "trx;LogFileName=SpendSmart.Tests/TestResults/test_results.trx"
+                    dotnet test --logger "trx;LogFileName=test_results.trx" --results-directory SpendSmart.Tests/TestResults
                     trx2junit SpendSmart.Tests/TestResults/test_results.trx -o SpendSmart.Tests/TestResults/test_results.xml
                 '''
             }

@@ -9,6 +9,8 @@ pipeline {
         CONTAINER_PORT = '8080'                     // Port inside the container (default for ASP.NET Core)
         LOG_FILE = 'container_logs.txt'            // File to store container logs
         COMPOSE_PROJECT_NAME = 'spendsmart' // Match the actual Jenkins job folder name or use same in both
+        DOTNET_TOOLS = "${env.HOME}/.dotnet/tools"
+        PATH = "${env.PATH}:${env.HOME}/.dotnet/tools"
     }
 
     stages {
@@ -47,6 +49,16 @@ pipeline {
                 sh 'dotnet publish -c Release -o out'  // Publishes files to /out
             }
         }
+         stage('Run Unit Tests') {
+            steps {
+                sh 'dotnet tool install --global trx2junit || true'
+                sh '''
+                    export PATH="$PATH:$HOME/.dotnet/tools"
+                    dotnet test --logger "trx;LogFileName=test_results.trx"
+                    trx2junit test_results.trx -o test_results.xml
+                '''
+            }
+         }
 
         stage('Stop & Remove Existing Container') {
             steps {
@@ -81,9 +93,11 @@ pipeline {
 
     post {
         success {
+            junit 'test_results.xml'
             echo "CI/CD pipeline completed successfully. App is running on http://localhost:${HOST_PORT}"
         }
         failure {
+            junit 'test_results.xml'
             echo "CI/CD pipeline failed. Check the console output above for errors."
         }
     }

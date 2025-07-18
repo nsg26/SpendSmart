@@ -94,7 +94,7 @@ pipeline {
     post {
         success {
             junit 'SpendSmart.Tests/TestResults/test_results.xml'
-            echo "CI/CD pipeline completed successfully. App is running on http://localhost:${HOST_PORT}"
+            echo "CI/CD pipeline completed successfully. App is running on https://localhost:${HOST_PORT}"
         }
         failure {
              junit 'SpendSmart.Tests/TestResults/test_results.xml'

@@ -4,6 +4,7 @@
 [![Docker Container](https://img.shields.io/badge/Docker-Container-informational)](https://www.docker.com)
 [![ASP.NET Core 8](https://img.shields.io/badge/ASP.NET%20Core-8.0-purple)](https://dotnet.microsoft.com)
 [![Webhook Enabled](https://img.shields.io/badge/Webhook-Enabled-brightgreen)](https://docs.github.com/en/webhooks)
+![Tests](https://img.shields.io/badge/Unit%20Tests-Passing-brightgreen)
 
 SpendSmart is a containerized ASP.NET MVC 8 application with cookie-based authentication, SQL Server backend, and EF Core migrations. The application exposes a secured Web API for external consumption and integrates live currency conversion using a third-party API. Managed via Docker and Jenkins CI/CD.
 ![SpendSmart Login](SpendSmart/Assets/Login.png)
@@ -247,6 +248,16 @@ ngrok http 9090
    
 ### Result
 Every push to GitHub triggers a Jenkins build automatically
+
+---
+
+### Unit Testing (xUnit)
+
+SpendSmart uses **xUnit** for unit testing, integrated into Jenkins CI pipeline.
+
+Test coverage includes:
+- CurrencyService – success + error handling
+- Automated via `dotnet test` in Jenkins
 
 ---
 

@@ -76,7 +76,7 @@ namespace SpendSmart
             var app = builder.Build();
 
             // ===========================================
-            // ✅ Azure-safe Migration Logic (Auto apply)
+            // Azure-safe Migration Logic (Auto apply)
             // ===========================================
             using (var scope = app.Services.CreateScope())
             {
@@ -89,7 +89,7 @@ namespace SpendSmart
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"⚠️ EF Core migration failed: {ex.Message}");
+                    Console.WriteLine($"EF Core migration failed: {ex.Message}");
                 }
 
                 // Create Roles and Admin User if not exist

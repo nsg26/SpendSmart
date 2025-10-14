@@ -24,10 +24,10 @@ jobs:
           dotnet-version: '8.x'
 
       - name: Build with dotnet
-        run: dotnet Spendsmart/Spendsmart/SpendSmart.csproj build --configuration Release
+        run: dotnet build Spendsmart/Spendsmart/SpendSmart.csproj --configuration Release
 
       - name: dotnet publish
-        run: dotnet Spendsmart/Spendsmart/SpendSmart.csproj publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish Spendsmart/Spendsmart/SpendSmart.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -64,5 +64,6 @@ jobs:
           package: .
 
           
+
 
 

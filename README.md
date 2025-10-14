@@ -8,7 +8,8 @@
 
 SpendSmart is a containerized ASP.NET MVC 8 application with cookie-based authentication, SQL Server backend, and EF Core migrations. The application exposes a secured Web API for external consumption and integrates live currency conversion using a third-party API. Managed via Docker and Jenkins CI/CD.
 
-Live on Azure: [Try the app here](spendsmart-app-daagcrd6g0effgf4.uksouth-01.azurewebsites.net)
+**Live on Azure:** [Try the app here](https://spendsmart-app-daagcrd6g0effgf4.uksouth-01.azurewebsites.net)
+
 ![SpendSmart Login](SpendSmart/Assets/Login.png)
 ![SpendSmart User_Landing](SpendSmart/Assets/User_Landing.png)
 ![SpendSmart User_DashBoard](SpendSmart/Assets/User_DashBoard.png)

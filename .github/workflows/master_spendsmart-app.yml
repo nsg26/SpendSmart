@@ -3,6 +3,7 @@
 
 name: Build and deploy ASP.Net Core app to Azure Web App - spendsmart-app
 
+
 on:
   push:
     branches:
@@ -64,6 +65,7 @@ jobs:
           package: .
 
           
+
 
 
 
